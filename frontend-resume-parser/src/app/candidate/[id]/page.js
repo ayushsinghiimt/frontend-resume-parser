@@ -1,21 +1,59 @@
+"use client";
+import { use, useEffect, useState } from 'react';
 import { CandidateProfile } from "@/components/profile/CandidateProfile";
-
-// Mock Data Lookup (In a real app, fetch from API)
-const getCandidate = (id) => {
-    return {
-        id: id,
-        name: 'Alice Johnson',
-        role: 'Senior Frontend Engineer',
-        skills: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS', 'GraphQL', 'Node.js', 'Framer Motion', 'Jest', 'AWS'],
-    };
-};
+import { Center, Loader, Text } from '@mantine/core';
+import axios from 'axios';
 
 export default function CandidatePage({ params }) {
-    const { id } = params;
-    const candidate = getCandidate(id);
+    const { id } = use(params);
+    const [candidate, setCandidate] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Removed GridBackground wrapper to fix layout issues
-    // Using a simple full-width layout with Mantine body color
+    useEffect(() => {
+        async function fetchCandidate() {
+            try {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/candidates/${id}/`);
+                setCandidate(response.data);
+            } catch (err) {
+                console.error('Error fetching candidate:', err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        if (id) {
+            fetchCandidate();
+        }
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen w-full pt-16 flex items-center justify-center" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
+                <Center>
+                    <Loader size="lg" />
+                </Center>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen w-full pt-16 flex items-center justify-center" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
+                <Text c="red">Error loading candidate: {error}</Text>
+            </div>
+        );
+    }
+
+    if (!candidate) {
+        return (
+            <div className="min-h-screen w-full pt-16 flex items-center justify-center" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
+                <Text c="dimmed">Candidate not found</Text>
+            </div>
+        );
+    }
+
     return (
         <div
             className="min-h-screen w-full pt-16"

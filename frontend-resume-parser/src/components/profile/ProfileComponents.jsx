@@ -4,15 +4,13 @@ import { Paper, Group, Stack, Text, Avatar, Badge, Button, Title, ThemeIcon, Box
 import { Mail, Phone, MapPin, CheckCircle, ShieldCheck, Upload, Eye } from 'lucide-react';
 import axios from 'axios';
 
-export const SummaryBox = ({ candidate }) => {
-    const suitableProfiles = ['Frontend Engineer', 'Full Stack Developer', 'React Developer', 'UI Engineer'];
-
+export const SummaryBox = ({ candidate, onIdentityRequest, onUploadDocuments, requestSent, onViewMessage }) => {
     const confidenceScore = candidate.confidence_score
         ? Math.round(candidate.confidence_score * 100)
         : null;
 
     return (
-        <Paper p="md" radius="md" withBorder h="100%" bg="var(--mantine-color-body)">
+        <Paper p="md" radius="md" withBorder style={{ display: 'flex', flexDirection: 'column' }} bg="var(--mantine-color-body)">
             <Group justify="space-between" align="flex-start" mb="sm">
                 <Avatar size={80} radius="xl" color="blue" variant="light">
                     {candidate.name ? candidate.name.charAt(0) : '?'}
@@ -28,49 +26,67 @@ export const SummaryBox = ({ candidate }) => {
                             AI Confidence: {confidenceScore}%
                         </Badge>
                     )}
-                    <Group gap={4}>
-                        {suitableProfiles.map((profile, index) => (
-                            <Kbd key={index} size="xs">{profile}</Kbd>
-                        ))}
+                    <Group gap="xs">
+                        {requestSent ? (
+                            <Button
+                                size="sm"
+                                variant="light"
+                                color="green"
+                                leftSection={<CheckCircle size={14} />}
+                                rightSection={<Eye size={14} />}
+                                onClick={onViewMessage}
+                            >
+                                Request Sent
+                            </Button>
+                        ) : (
+                            <Button size="sm" color="blue" onClick={onIdentityRequest}>
+                                Request Govt ID
+                            </Button>
+                        )}
+                        <Button size="sm" variant="outline" color="gray" onClick={onUploadDocuments}>
+                            View / upload docs
+                        </Button>
                     </Group>
                 </Stack>
             </Group>
 
-            <Stack gap="xs">
-                <Title order={2}>{candidate.name || 'N/A'}</Title>
-                <Text size="lg" c="dimmed">
-                    {candidate.experience && candidate.experience.length > 0
-                        ? candidate.experience[0].position
-                        : 'No position available'}
-                </Text>
-
-                <Group gap="md" mt="xs">
-                    {candidate.email && (
-                        <Group gap={4}>
-                            <Mail size={16} className="text-gray-500" />
-                            <Text size="sm">{candidate.email}</Text>
-                        </Group>
-                    )}
-                    {candidate.phone && (
-                        <Group gap={4}>
-                            <Phone size={16} className="text-gray-500" />
-                            <Text size="sm">{candidate.phone}</Text>
-                        </Group>
-                    )}
-                    {candidate.location && (
-                        <Group gap={4}>
-                            <MapPin size={16} className="text-gray-500" />
-                            <Text size="sm">{candidate.location}</Text>
-                        </Group>
-                    )}
-                </Group>
-
-                {candidate.summary && (
-                    <Text mt="sm" lineClamp={3}>
-                        {candidate.summary}
+            <Box style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                <Stack gap="xs">
+                    <Title order={2}>{candidate.name || 'N/A'}</Title>
+                    <Text size="lg" c="dimmed">
+                        {candidate.experience && candidate.experience.length > 0
+                            ? candidate.experience[0].position
+                            : 'No position available'}
                     </Text>
-                )}
-            </Stack>
+
+                    <Group gap="md" mt="xs">
+                        {candidate.email && (
+                            <Group gap={4}>
+                                <Mail size={16} className="text-gray-500" />
+                                <Text size="sm">{candidate.email}</Text>
+                            </Group>
+                        )}
+                        {candidate.phone && (
+                            <Group gap={4}>
+                                <Phone size={16} className="text-gray-500" />
+                                <Text size="sm">{candidate.phone}</Text>
+                            </Group>
+                        )}
+                        {candidate.location && (
+                            <Group gap={4}>
+                                <MapPin size={16} className="text-gray-500" />
+                                <Text size="sm">{candidate.location}</Text>
+                            </Group>
+                        )}
+                    </Group>
+
+                    {candidate.summary && (
+                        <Text mt="sm">
+                            {candidate.summary}
+                        </Text>
+                    )}
+                </Stack>
+            </Box>
         </Paper>
     );
 };
@@ -79,24 +95,26 @@ export const SkillsBox = ({ skills }) => {
     const skillsList = skills || [];
 
     return (
-        <Paper p="md" radius="md" withBorder h="100%" bg="var(--mantine-color-body)">
+        <Paper p="md" radius="md" withBorder h="100%" style={{ display: 'flex', flexDirection: 'column' }} bg="var(--mantine-color-body)">
             <Title order={4} mb="sm">Technical Skills</Title>
-            {skillsList.length > 0 ? (
-                <Group gap="xs">
-                    {skillsList.map((skill, index) => (
-                        <Badge
-                            key={index}
-                            size="lg"
-                            variant="light"
-                            color={['blue', 'cyan', 'teal', 'grape', 'violet', 'indigo'][index % 6]}
-                        >
-                            {skill.name}
-                        </Badge>
-                    ))}
-                </Group>
-            ) : (
-                <Text c="dimmed" size="sm">No skills available</Text>
-            )}
+            <Box style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                {skillsList.length > 0 ? (
+                    <Group gap="xs">
+                        {skillsList.map((skill, index) => (
+                            <Badge
+                                key={index}
+                                size="lg"
+                                variant="light"
+                                color={['blue', 'cyan', 'teal', 'grape', 'violet', 'indigo'][index % 6]}
+                            >
+                                {skill.name}
+                            </Badge>
+                        ))}
+                    </Group>
+                ) : (
+                    <Text c="dimmed" size="sm">No skills available</Text>
+                )}
+            </Box>
         </Paper>
     );
 };
@@ -130,7 +148,7 @@ export const TimelineBox = ({ experience }) => {
     const totalExperience = calculateTotalYears();
 
     return (
-        <Paper p="md" radius="md" withBorder h="100%" style={{ display: 'flex', flexDirection: 'column' }} bg="var(--mantine-color-body)">
+        <Paper p="md" radius="md" withBorder h="300px" style={{ display: 'flex', flexDirection: 'column' }} bg="var(--mantine-color-body)">
             <Group justify="space-between" mb="sm">
                 <Title order={4}>Experience History</Title>
                 {totalExperience > 0 && (
@@ -168,21 +186,93 @@ export const TimelineBox = ({ experience }) => {
     );
 };
 
+export const ProjectsBox = ({ projects }) => {
+    const projectsList = projects || [];
+
+    return (
+        <Paper p="md" radius="md" withBorder h="300" style={{ display: 'flex', flexDirection: 'column' }} bg="var(--mantine-color-body)">
+            <Group justify="space-between" mb="sm">
+                <Title order={4}>Projects</Title>
+                {projectsList.length > 0 && (
+                    <Badge size="lg" variant="light" color="grape">{projectsList.length} Project{projectsList.length !== 1 ? 's' : ''}</Badge>
+                )}
+            </Group>
+
+            <Box style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                {projectsList.length > 0 ? (
+                    <Accordion variant="separated">
+                        {projectsList.map((project, index) => (
+                            <Accordion.Item key={index} value={`project-${index}`}>
+                                <Accordion.Control>
+                                    <Group justify="space-between" wrap="nowrap">
+                                        <Box style={{ flex: 1 }}>
+                                            <Text fw={600} size="sm">{project.name}</Text>
+                                            {project.start_date && (
+                                                <Text size="xs" c="dimmed" mt={2}>
+                                                    {project.start_date} - {project.end_date || 'Present'}
+                                                </Text>
+                                            )}
+                                        </Box>
+                                    </Group>
+                                </Accordion.Control>
+                                <Accordion.Panel>
+                                    <Stack gap="xs">
+                                        <Text size="sm" c="dimmed">{project.description || 'No description available'}</Text>
+                                        {project.technologies && (
+                                            <Group gap={4}>
+                                                <Text size="xs" fw={600}>Tech:</Text>
+                                                <Text size="xs" c="dimmed">{project.technologies}</Text>
+                                            </Group>
+                                        )}
+                                        {project.url && (
+                                            <Text size="xs">
+                                                <a href={project.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--mantine-color-blue-6)' }}>
+                                                    View Project →
+                                                </a>
+                                            </Text>
+                                        )}
+                                    </Stack>
+                                </Accordion.Panel>
+                            </Accordion.Item>
+                        ))}
+                    </Accordion>
+                ) : (
+                    <Text c="dimmed" size="sm">No projects available</Text>
+                )}
+            </Box>
+        </Paper>
+    );
+};
+
 export const IdentityBox = ({ candidate, onDocumentsUpdate }) => {
     const [loading, setLoading] = useState(false);
-    const [sent, setSent] = useState(false);
+    const [sent, setSent] = useState(!!candidate?.document_request_message);
     const [modalOpened, setModalOpened] = useState(false);
+    const [messageModalOpened, setMessageModalOpened] = useState(false);
     const [aadharDoc, setAadharDoc] = useState(null);
     const [panDoc, setPanDoc] = useState(null);
     const [uploadLoading, setUploadLoading] = useState(false);
     const [uploadError, setUploadError] = useState(null);
 
-    const handleRequest = () => {
+    const handleRequest = async () => {
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/candidates/${candidate.id}/request-documents/`
+            );
+
             setSent(true);
-        }, 1500);
+            if (onDocumentsUpdate) {
+                const updatedCandidate = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/candidates/${candidate.id}/`
+                );
+                onDocumentsUpdate(updatedCandidate.data);
+            }
+        } catch (err) {
+            console.error('Error requesting documents:', err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleUpload = async () => {
@@ -223,6 +313,19 @@ export const IdentityBox = ({ candidate, onDocumentsUpdate }) => {
             setUploadLoading(false);
         }
     };
+
+    const parseEmailMessage = (message) => {
+        if (!message) return { subject: '', body: '' };
+
+        const lines = message.split('\n');
+        const subjectLine = lines[0] || '';
+        const subject = subjectLine.replace('Subject: ', '');
+        const body = lines.slice(2).join('\n');
+
+        return { subject, body };
+    };
+
+    const emailData = parseEmailMessage(candidate?.document_request_message);
 
     const DocumentUploadSection = ({ title, file, setFile, existingDoc }) => {
         const [showPreview, setShowPreview] = useState(false);
@@ -320,7 +423,13 @@ export const IdentityBox = ({ candidate, onDocumentsUpdate }) => {
 
                     <Group grow>
                         {sent ? (
-                            <Button variant="light" color="green" leftSection={<CheckCircle size={16} />}>
+                            <Button
+                                variant="light"
+                                color="green"
+                                leftSection={<CheckCircle size={16} />}
+                                rightSection={<Eye size={16} />}
+                                onClick={() => setMessageModalOpened(true)}
+                            >
                                 Request Sent
                             </Button>
                         ) : (
@@ -364,6 +473,24 @@ export const IdentityBox = ({ candidate, onDocumentsUpdate }) => {
                     >
                         Upload Documents
                     </Button>
+                </Stack>
+            </Modal>
+
+            <Modal
+                opened={messageModalOpened}
+                onClose={() => setMessageModalOpened(false)}
+                title="Document Request Email"
+                size="lg"
+            >
+                <Stack gap="md">
+                    <Box>
+                        <Text fw={600} size="sm" c="dimmed" mb={4}>Subject:</Text>
+                        <Text>{emailData.subject}</Text>
+                    </Box>
+                    <Box>
+                        <Text fw={600} size="sm" c="dimmed" mb={4}>Message:</Text>
+                        <Text style={{ whiteSpace: 'pre-wrap' }}>{emailData.body}</Text>
+                    </Box>
                 </Stack>
             </Modal>
         </>

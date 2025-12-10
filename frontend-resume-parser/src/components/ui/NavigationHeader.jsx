@@ -35,32 +35,32 @@ export const NavigationHeader = () => {
                         {/* Left: Logo */}
                         <Group gap="xs" component={Link} href="/" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}>
                             <ThemeIconVariant wrapper />
-                            <Title order={3} size="h3" fw={700}
+                            <Title order={3} size="h3" fw={500}
                                 style={{
                                     background: 'linear-gradient(45deg, var(--mantine-color-blue-6), var(--mantine-color-violet-6))',
                                     WebkitBackgroundClip: 'text',
                                     WebkitTextFillColor: 'transparent',
                                 }}
                             >
-                                TraqCheck
+                                TraqCheck Resume Parser
                             </Title>
+                            <Group gap="md" ml="100px">
+                                <Button component={Link} href="/" variant="subtle" size="sm">Home</Button>
+                                <Button component={Link} href="/dashboard" variant="subtle" size="sm">Dashboard</Button>
+                            </Group>
                         </Group>
 
-                        <Group>
-                            <Button component={Link} href="/dashboard" variant="subtle">Dashboard</Button>
-                            {/* Right: Theme Toggle */}
-                            {mounted && (
-                                <ActionIcon
-                                    variant="default"
-                                    size="lg"
-                                    radius="xl"
-                                    onClick={() => toggleColorScheme()}
-                                    aria-label="Toggle theme"
-                                >
-                                    {dark ? <Sun size={18} /> : <Moon size={18} />}
-                                </ActionIcon>
-                            )}
-                        </Group>
+                        {mounted && (
+                            <ActionIcon
+                                variant="default"
+                                size="lg"
+                                radius="xl"
+                                onClick={() => toggleColorScheme()}
+                                aria-label="Toggle theme"
+                            >
+                                {dark ? <Sun size={18} /> : <Moon size={18} />}
+                            </ActionIcon>
+                        )}
                     </Group>
                 </Container>
             </Paper>
