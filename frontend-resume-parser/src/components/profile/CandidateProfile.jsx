@@ -1,11 +1,17 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid, Button, Box } from '@mantine/core';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { SummaryBox, SkillsBox, TimelineBox, IdentityBox } from './ProfileComponents';
 
-export const CandidateProfile = ({ candidate }) => {
+export const CandidateProfile = ({ candidate: initialCandidate }) => {
+    const [candidate, setCandidate] = useState(initialCandidate);
+
+    const handleDocumentsUpdate = (updatedCandidate) => {
+        setCandidate(updatedCandidate);
+    };
+
     return (
         <Box px="sm" py="xs">
             <Button
@@ -29,10 +35,10 @@ export const CandidateProfile = ({ candidate }) => {
                 </Grid.Col>
 
                 <Grid.Col span={{ base: 12, md: 6 }}>
-                    <TimelineBox />
+                    <TimelineBox experience={candidate.experience} />
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, md: 6 }}>
-                    <IdentityBox />
+                    <IdentityBox candidate={candidate} onDocumentsUpdate={handleDocumentsUpdate} />
                 </Grid.Col>
             </Grid>
         </Box>

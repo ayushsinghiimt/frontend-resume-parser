@@ -37,7 +37,7 @@ export const CandidateDashboard = () => {
     useEffect(() => {
         async function fetchCandidates() {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/candidates/`);
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/candidates`);
                 setCandidates(response.data);
             } catch (err) {
                 console.error('Error fetching candidates:', err);
@@ -49,24 +49,26 @@ export const CandidateDashboard = () => {
         fetchCandidates();
     }, []);
 
-    const rows = candidates.map((candidate) => (
-        <Table.Tr key={candidate.id}>
-            <Table.Td>
-                <Anchor component={Link} href={`/candidate/${candidate.id}`} fw={500}>
-                    {candidate.name || 'N/A'}
-                </Anchor>
-            </Table.Td>
-            <Table.Td>
-                <Text size="sm">{candidate.email || 'N/A'}</Text>
-            </Table.Td>
-            <Table.Td>
-                <Text size="sm">{candidate.company || 'N/A'}</Text>
-            </Table.Td>
-            <Table.Td>
-                <StatusBadge status={candidate.parsing_status} />
-            </Table.Td>
-        </Table.Tr>
-    ));
+    const rows = candidates
+        .filter(candidate => candidate.id)
+        .map((candidate) => (
+            <Table.Tr key={candidate.id}>
+                <Table.Td>
+                    <Anchor component={Link} href={`/candidate/${candidate.id}`} fw={500}>
+                        {candidate.name || 'N/A'}
+                    </Anchor>
+                </Table.Td>
+                <Table.Td>
+                    <Text size="sm">{candidate.email || 'N/A'}</Text>
+                </Table.Td>
+                <Table.Td>
+                    <Text size="sm">{candidate.company || 'N/A'}</Text>
+                </Table.Td>
+                <Table.Td>
+                    <StatusBadge status={candidate.parsing_status} />
+                </Table.Td>
+            </Table.Tr>
+        ));
 
     return (
         <Container size="xl" py="xl">
