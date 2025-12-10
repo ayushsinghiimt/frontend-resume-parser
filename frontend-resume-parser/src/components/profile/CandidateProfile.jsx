@@ -165,7 +165,7 @@ export const CandidateProfile = ({ candidate: initialCandidate }) => {
     };
 
     return (
-        <Box px="200px"  >
+        <Box px="200px" mb="60px"  >
             <Button
                 component={Link}
                 href="/dashboard"
@@ -185,6 +185,7 @@ export const CandidateProfile = ({ candidate: initialCandidate }) => {
                         onUploadDocuments={handleUploadDocuments}
                         requestSent={!!candidate.document_request_message}
                         onViewMessage={handleViewMessage}
+                        loading={loading}
                     />
                 </Grid.Col>
                 <Grid.Col>

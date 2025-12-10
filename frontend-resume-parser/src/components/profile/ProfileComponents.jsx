@@ -4,24 +4,25 @@ import { Paper, Group, Stack, Text, Avatar, Badge, Button, Title, ThemeIcon, Box
 import { Mail, Phone, MapPin, CheckCircle, ShieldCheck, Upload, Eye } from 'lucide-react';
 import axios from 'axios';
 
-export const SummaryBox = ({ candidate, onIdentityRequest, onUploadDocuments, requestSent, onViewMessage }) => {
+export const SummaryBox = ({ candidate, onIdentityRequest, onUploadDocuments, requestSent, onViewMessage, loading }) => {
     const confidenceScore = candidate.confidence_score
         ? Math.round(candidate.confidence_score * 100)
         : null;
 
     return (
         <Paper p="md" radius="md" withBorder style={{ display: 'flex', flexDirection: 'column' }} bg="var(--mantine-color-body)">
-            <Group justify="space-between" align="flex-start" mb="sm">
+            <Group justify="space-between" align="center" mb="sm">
                 <Avatar size={80} radius="xl" color="blue" variant="light">
                     {candidate.name ? candidate.name.charAt(0) : '?'}
                 </Avatar>
 
-                <Stack align="flex-end" gap="xs">
+                <Group style={{ flex: 1 }} justify="space-between" align="center">
                     {confidenceScore && (
                         <Badge
                             size="lg"
                             variant="gradient"
                             gradient={{ from: 'teal', to: 'lime', deg: 105 }}
+                            ml="md"
                         >
                             AI Confidence: {confidenceScore}%
                         </Badge>
@@ -39,7 +40,7 @@ export const SummaryBox = ({ candidate, onIdentityRequest, onUploadDocuments, re
                                 Request Sent
                             </Button>
                         ) : (
-                            <Button size="sm" color="blue" onClick={onIdentityRequest}>
+                            <Button size="sm" color="blue" onClick={onIdentityRequest} loading={loading}>
                                 Request Govt ID
                             </Button>
                         )}
@@ -47,7 +48,7 @@ export const SummaryBox = ({ candidate, onIdentityRequest, onUploadDocuments, re
                             View / upload docs
                         </Button>
                     </Group>
-                </Stack>
+                </Group>
             </Group>
 
             <Box style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
