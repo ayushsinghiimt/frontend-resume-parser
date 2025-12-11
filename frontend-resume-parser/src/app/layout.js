@@ -18,8 +18,11 @@ export const metadata = {
 
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { NavigationHeader } from "@/components/ui/NavigationHeader";
+import { ServerStatusNotification } from "@/components/ui/ServerStatusNotification";
 import "@mantine/core/styles.css";
+import '@mantine/notifications/styles.css';
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { Notifications } from '@mantine/notifications';
 
 export default function RootLayout({ children }) {
   return (
@@ -29,6 +32,8 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <MantineProvider>
+          <Notifications position="top-right" zIndex={1000} />
+          <ServerStatusNotification />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
