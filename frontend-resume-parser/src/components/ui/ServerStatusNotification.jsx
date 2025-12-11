@@ -16,7 +16,7 @@ export function ServerStatusNotification() {
         const checkServerHealth = async () => {
             try {
                 // Attempt to reach the server
-                await axios.get(`${API_URL}/api/health/`, { timeout: 5000 });
+                await axios.get(`${API_URL}/api/health/`, { timeout: 2500 });
 
                 // --- SUCCESS ---
                 if (!isMounted) return;
@@ -52,7 +52,7 @@ export function ServerStatusNotification() {
                 });
 
                 // Retry after 3 seconds
-                timeoutId = setTimeout(checkServerHealth, 3000);
+                timeoutId = setTimeout(checkServerHealth, 2000);
             }
         };
 
